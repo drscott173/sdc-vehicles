@@ -182,8 +182,9 @@ div#notebook {
 <p>This notebook documents that journey.</p>
 <p><strong> Introduction </strong></p>
 <p>Let's begin by importing our code from the Lane Finder project and loading up a test image, then viewing it.</p>
-<p>This code requires that the "Vehicle Detection" github be repo be a peer subdirectory,
+<p>This code requires that the <a href="https://github.com/udacity/CarND-Vehicle-Detection">"Vehicle Detection"</a> github be repo be a peer subdirectory,
 located at ../CarND-Vehicle-Detection/.</p>
+<p>I have replicated both the Udacity project as well as all training examples in my own <a href="https://github.com/drscott173/CarND-Vehicle-Detection">CarND-Vehicle-Detection repository</a> for convenience.  Download this and place it in a sister directory to this repo, accessible at ../CarND-Vehicle-Detection.</p>
 
 </div>
 </div>
@@ -4589,7 +4590,7 @@ OQSTTTbZZJNNNhmTQzDZZJNNNtlkkwH/P8Ddlx7Ei38VAAAAAElFTkSuQmCC
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's scan the sample images for vehicles and non-vehices, which we grabbed from the Udacity website and stored in the CarND-Vehicle-Detection's 'train' directory.  Print out the count of vehicles and non-vehicles seen in recusive subdirectories.</p>
+<p>Let's scan the sample images for vehicles and non-vehicles, which we grabbed from the Udacity website and stored in the <a href="https://github.com/udacity/CarND-Vehicle-Detection">CarND-Vehicle-Detection's</a> 'train' directory.  Print out the count of vehicles and non-vehicles seen in recusive subdirectories.</p>
 
 </div>
 </div>
@@ -4634,8 +4635,7 @@ OQSTTTbZZJNNNhmTQzDZZJNNNtlkkwH/P8Ddlx7Ei38VAAAAAElFTkSuQmCC
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Good!  Our set is relatively well balanced.</p>
-<p>We now introduce image augmentation tricks.  We do this to avoid over-fitting.<br>
-These techniques were helpful in deep learning.  We randomly introduce shadows,
+<p>We now introduce image augmentation tricks.  We do this to avoid over-fitting. These techniques were helpful in deep learning.  We randomly introduce shadows,
 variations in brightness, translations in x and y, and perhaps flipping left to right.</p>
 
 </div>
@@ -7663,6 +7663,7 @@ h2+MMca0AO7wjTHGmBbAHb4xxhjTArjDN8YYY1qAfwDTkXawTH8OPAAAAABJRU5ErkJggg==
 <p><strong>Histogram of Gradients (HOG)</strong></p>
 <p>We borrow code from Udacity for creating feature vectors from images.  These vectors simply compress the image into a "spatial size," then unwrap the image into a single, long vector of color values.  We append to this an instagram of color values separated into 'hist_bins' bins.  We then append a histogram of gradients, which we bucket into 9 different angles.</p>
 <p>Note that our vector is relatively small.  We reduce an image to roughly 500 numbers, first a compressed 8x8 block of colors, then a histogram of colors from the whole image taken into just 16 buckets, and finally a histogram of gradients with 9 angle "buckets."</p>
+<p>We experimented with multiple settings.  At one point, our feature vector was thousands of numbers long with a 32x32 spatial size, 8 pixels per cell for HOG analysis, 32 histogram bins of color.  Accuracy only bumped a few points while computation skyrocketed.  We decided to ease back to a computationally cheap setting that gave decent results at 95%, then use heuristics to improve the pipeline by examining frame to frame in video.</p>
 
 </div>
 </div>
@@ -7766,7 +7767,7 @@ Feature extraction now complete.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Stack these feature vectors into a horizontal pile. That becomes our set of features X for machine learning. Assign a "1" label to all cars and a "0" label to all others.   That becomes our labels y for machine learning.</p>
+<p>Stack these feature vectors into a vertical pile. That becomes our set of features X for machine learning. Assign a "1" label to all cars and a "0" label to all others and stack these in a column, one number per feature vector.   That becomes our labels y for machine learning.</p>
 <p>Separate X, y into a training and test set, pulling random sets such that we reserve 20% of our examples for testing, 80% for training.</p>
 
 </div>
@@ -7875,7 +7876,7 @@ Test Accuracy of SVC =  0.9586
 <p><strong> Sliding Window Search </strong></p>
 <p>We see that the classifier does a decent, though not perfect, job of identifying cars at 96% accuracy.</p>
 <p>We find cars by picking a window size, say a 32x32 square, and sliding this from left to right, from the top to the bottom over our image.  We run our classifier at each position.  If we get a hit, we remember this area as a "hot window."  This gives us a set of candiate image areas for cars.</p>
-<p>Images capture perspective.  Cars on the horizon, near the middle of the image, will appear small. Cars closer to us at the bottom of the image will appear larger.  We tessleate the image with fine-grained windows at the middle, then increase the window size as we go lower in the image.  We also overlap the window bands for redundancy, allowing for offset problems where we accidentally capture only a fraction of a car in our sliding technique.</p>
+<p>Images from the forwad-facing car camera capture perspective.  Cars and objects on the horizon, near the middle of the image, will appear small. Objects closer to us at the bottom of the image will appear larger.  We tesselate the image with fine-grained windows at the middle, then increase the window size as we go lower in the image.  We also overlap the window bands for redundancy, allowing for offset problems where we accidentally capture only a fraction of a car in our sliding technique.</p>
 <p>We divide the window into multiple bands (win_1 to win_4) in the code below, each of which has a few set of windows.  We start with a top band on the horizon with the smallest 32x32 window.  The next band steps down a bit, using a wider aperture of 40x40.  We repeat this for 64x64 and 80x80 window sizes.  We stack and restric these windows to form a perspective pyramid.</p>
 
 </div>
@@ -11996,9 +11997,8 @@ UAAAAABJRU5ErkJggg==
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong> Video Implementation </strong></p>
-<p>We first evaluated a video one frame at a time, then animated results.  In this phase we don't do any processing between farmes.  Instead, we just watch the boxes over time, driving our intuition about what the algorithm needs to eliminate.</p>
+<p>We first evaluated a video one frame at a time, then animated results.  In this phase we don't do any processing between frames.  Instead, we just watch the boxes over time, driving our own intuition about what the inter-frame heuristics need to eliminate.</p>
 <p>We notice that the 95% accurate boxes seem to rain down on cars, repeatedly identifying areas of the car as it drives down the highway.  The algorithm also has spurious identifications that flicker in and out over time.</p>
-<p>This leads us to an interesting heuristic.  Let's assume each window applies heat over time.  We'll make the heat cool quickly, say, 50% loss after every frame.  We'll take the bounding box of the "hottest" areas as our vehicles.  That should get rid of the flicker.  Well, most of it, anyway.</p>
 
 </div>
 </div>
@@ -12089,7 +12089,7 @@ UAAAAABJRU5ErkJggg==
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We see the effects of our cheap, fast algorithm on the video.  We do identify cars and rain down blue squares as we described.  False positives flicker.  We are getting closer but aren't there yet.</p>
+<p>We see the effects of our cheap, fast algorithm on the sample video.  We do identify cars and rain down blue squares as we described.  False positives flicker.  We are getting closer but aren't there yet.  Let's try the entire project video and see if any other ideas come to us.</p>
 
 </div>
 </div>
@@ -12134,7 +12134,6 @@ UAAAAABJRU5ErkJggg==
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong> Video Processing </strong></p>
 <p>We try the raw algorithm on our project video.  Again, we examine the behavior of the classifier and try to invent heuristics to smooth out behavior over time.</p>
-<p>The idea of heat maps from class is quite compelling.  We'll need an intersting trick to figure out the treshold for "clipping" false postiives, as this seems to vary over time.</p>
 
 </div>
 </div>
@@ -12235,6 +12234,7 @@ UAAAAABJRU5ErkJggg==
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong> Fixing false positives </strong></p>
 <p>We borrow a page from Udacity and introduce a simple heat map.  We throttle the heatmap so that any two rectangles overlapping are candidates, but standalone rectangles are rejected.</p>
+<p>Here's what we do.  Let's assume each window applies heat over time.  We'll make the heat cool quickly, say, 50% loss after every frame.  We'll take the bounding box of the "hottest" areas as our vehicles.  That should get rid of the flicker.  Well, most of it, anyway.</p>
 <p>This shows promise.  Its still not enough.</p>
 
 </div>
@@ -16469,10 +16469,11 @@ gg==
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong> Dyanmic Heat Maps </strong></p>
+<p>Now we have to pick a "threshold" to pick hot areas for cars.</p>
 <p>Statistics to the rescue!</p>
-<p>We'll compute the mean heat across our image.  We seek to find the hottest areas which, statistically speaking, fall within the 95th percentile.  This is measured as two standard
+<p>We'll compute the "mean heat" across our image.  We seek to find the hottest areas which, statistically speaking, fall within the 95th percentile.  This is measured as two standard
 devations above the mean.</p>
-<p>We set our threshold to mean + standard deviation.  That easy trick seems more than adequate for basic tracking.  We also clip this measure using empirical results for times when the road is cool, i.e., the average heat is low as no vehicles are seen.</p>
+<p>We set our threshold to mean + two standard deviations.  That easy trick seems more than adequate for basic tracking.  We also clip this measure using empirical results for times when the road is cool, i.e., the average heat is low as no vehicles are seen.</p>
 <p>We also cool off the heat at a rate of 50% every frame.  We experimented with different values and this seemed to work best.  Higher values (95%) would burn hot areas such as grass and trees, keeping previous spurioius measurements longer than necessary.  Lower values (25%) wouldn't keep good areas around long enough, due to shadows and poor lighting that causes the algorithm to fail intermittently.  50% was a decent compromise.</p>
 
 </div>
@@ -16599,7 +16600,7 @@ devations above the mean.</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong> Testing Dyanmic Heatmaps </strong></p>
-<p>We run our dynamic heat maps on a short video.  Looks great!  We have a fast algorithm that quickly identifies the center of cars.  However, our 95% accuracy seems to miss edges of the cars.  That's future work.</p>
+<p>We run our dynamic heat maps on a short test video.  Looks great!  We have a fast algorithm that quickly identifies the center of cars.  However, our 95% accuracy seems to miss edges of the cars.  That's future work.</p>
 
 </div>
 </div>
@@ -16731,11 +16732,13 @@ devations above the mean.</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong> Discussion </strong></p>
-<p>We've made significant progress with a computationally cheap algorithm, suitable for running on a low powered processor within a car.  Our 500-ish features can process 5-8 frames per second before optimization such as calculating HOG values once and sharing results across windows, or moving our pipeline into lower-level languages.</p>
+<p>We've made significant progress with a computationally cheap algorithm, suitable for running on a low powered processor within a car.  Our 500-ish features can process 5-8 frames per second on a 2014 MacBook Pro.  This is adequate and before pipeline optimization such as calculating HOG values once and sharing results across windows, or moving elements of computation into optimized fucntions in scikit, skimage, cv2 and other libraries.  That's a namespace problem -- keeping track of all those functions!  We leave that to the reader.</p>
 <p>This pedagogical example is far from complete for a commercial offering.  The regions identifed by dynamic heatmaps still flicker, and they don't cover the entire bounding box of each vehicle.  We could modify this to use the target area as a focus for a deep, detailed scan of the surrounding region with boxes that heavily overlap.  We do this as humans.  Something catches our eye, then we focus on that item, perusing it in detail.  The algoirthm presented here is the first stage, grabbing our attention.  For that, the technique performs well.</p>
 <p>We can improve our tracking of objects with a 3D model. This simple example demonstrates how to cars can intersect, creating a larger, single obstacle.  Only when the cars separate sufficiently do we see they are indeed two separate cars.  However, I'm not sure that's so bad.  Remember Top Gun?  The pilots thought they only had two bogies.  It wasn't until they got close that the bogies separated and equipment identiifed the four separate planes.  We see the same thing happening here to us.</p>
 <p>I'd like to explore the use of deep learning as a classifier.  This project focused on hand-engineered histograms of gradients, color histograms, and more.  Deep learning would work directly from pixels to classify image window regions as cars or not.  I felt that applying Deep Learning to HOGs felt wrong -- we were hand engineering techniques that may restrict DL's ability to find correlations among features we have not considered.</p>
 <p>Overally, I'm delighted at the chance to explore these techniques as part of the Udacity course.  This really gives us a sense for the issues in identifying cars.  It also continues my interesting in Deep Learning as a method for radically simplifying the data pipeline by eliminating hand-engineering features.</p>
+<p><em>Scott Penberthy</em></p>
+<p>February 11, 2017</p>
 
 </div>
 </div>
